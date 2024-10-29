@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 09:17:29 by msalembe          #+#    #+#             */
-/*   Updated: 2024/10/29 08:44:23 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/10/29 12:44:58 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,59 @@ static void	auxiliary(t_general *general)
 	}
 }
 
+static int	ft_exit_utils(char *str, t_general *general)
+{
+	while (*str)
+	{
+		if (!ft_isdigit(*str))
+		{
+			printf("bash: exit: %s: numeric argument required\n",
+				general->commands[1]);
+			return (0);
+		}
+		str++;
+	}
+	return (1);
+}
+
+static int	verify_args(char *filename, t_general *general)
+{
+	int		fd;
+	char	*str;
+
+	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC,
+			S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+	if (general->commands[1])
+	{
+		str = general->commands[1];
+		if (!ft_exit_utils(str, general))
+			return (0);
+		if (fd == -1)
+		{
+			perror("Erro ao abrir o arquivo");
+			exit(EXIT_FAILURE);
+		}
+		write(fd, str, ft_strlen(str));
+		close(fd);
+	}
+	else
+	{
+		write(fd, "0", 1);
+		close(fd);
+		exit(0);
+	}
+	return (1);
+}
+
 int	ft_exit(t_general *general)
 {
-	int	i;
+	int		i;
+	char	*filename;
 
 	i = -1;
+	filename = ".data";
+	if (!verify_args(filename, general))
+		return (1);
 	if (general->initial_command)
 		free(general->initial_command);
 	if (general->commands)
@@ -51,15 +99,6 @@ int	ft_exit(t_general *general)
 		free(general->commands);
 	}
 	auxiliary(general);
-	// if (general->token)
-	// {
-	// 	free(general->token->content);
-	// 	i = -1;
-	// 	while (general->token->command[++i])
-	// 		free(general->token->command[i]);
-	// 	free(general->token->command);
-	// 	free(general->token);
-	// }
 	printf("exit\n");
 	exit(0);
 }
