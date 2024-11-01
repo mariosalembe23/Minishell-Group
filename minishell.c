@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 19:07:57 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/01 12:08:32 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/01 15:19:50 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,16 +62,15 @@ static int	ft_execution(t_general *general, t_env **env)
 {
 	char	**commands;
 	t_token	*head;
-	
+
 	head = NULL;
-	//if (has_other_delimiter(general->initial_command))
-	//{
-		tokenize(general->initial_command, &head);
-		exec_command(&head);
-		return (1);
-	//}
 	general->commands = ft_split(general->initial_command, ' ');
 	commands = general->commands;
+	if (ft_strcmp(commands[0], "exit") == 0)
+		return (ft_exit(general));
+	tokenize(general->initial_command, &head);
+	exec_command(&head, general);
+	return (1);
 	if (!choose_command(general, commands, env))
 		return (0);
 	return (1);
@@ -104,7 +103,6 @@ int	main(int ac, char **av, char **ev)
 {
 	t_env		*env;
 	t_general	general;
-
 
 	(void)ac;
 	(void)av;

@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 12:02:53 by msalembe          #+#    #+#             */
-/*   Updated: 2024/10/29 12:54:41 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/01 14:52:48 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,5 @@ int	ft_cd(char **commands)
 	}
 	if (chdir(path) != 0)
 		printf("cd: %s\n", strerror(errno));
-	// if (path != NULL)
-	// 	printf("%s\n", path);
 	return (1);
 }

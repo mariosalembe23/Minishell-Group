@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 19:08:32 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/01 10:00:17 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/01 15:35:25 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 # include <unistd.h>
 # define FILE_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
 # define t_file "/tmp/minishel_trash.tmp"
+
 
 typedef struct s_general
 {
@@ -90,7 +91,6 @@ void				show_unique_var(char *key, t_env **env, char **input,
 void				ft_verify_signals(char **av, int ac);
 void				free_mat(char **mat);
 int					matlen(char **mat);
-void				exec_command(t_token **head);
 
 // TOKEN FUNCTIONS
 char				*ft_strndup(const char *str, size_t n);
@@ -110,11 +110,12 @@ void				clean_node(t_token *temp);
 void				case_type_3_utils(t_token *temp, char **temp_mat, int t_fd);
 void				case_type_3(t_token *temp, int pipefd[2]);
 void				case_type_4(t_token *temp);
-void				exec_son_pid(t_token *temp, int *pipefd);
+void				exec_son_pid(t_token *temp, int *pipefd,
+						t_general *general);
 void				exec_father(int *prev_fd, t_token *temp, int *pipefd,
 						pid_t pid);
 int					check_seg(t_token *temp);
-void				exec_command(t_token **head);
+void				exec_command(t_token **head, t_general *general);
 void				add_word(t_words **wds, char *value);
 void				append_node(t_token **head, char *content, int type_fd);
 
