@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 19:08:32 by msalembe          #+#    #+#             */
-/*   Updated: 2024/10/29 08:44:32 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/01 10:00:17 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 # include <termios.h>
 # include <unistd.h>
 # define FILE_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
+# define t_file "/tmp/minishel_trash.tmp"
 
 typedef struct s_general
 {
@@ -41,8 +42,16 @@ typedef struct s_general
 	struct s_env	*env;
 }					t_general;
 
+typedef struct s_env
+{
+	char			*key;
+	char			*value;
+	struct s_env	*next;
+}					t_env;
+
 typedef struct s_token
 {
+	int				seg;
 	int				type_fd;
 	char			*content;
 	char			**command;
@@ -50,12 +59,11 @@ typedef struct s_token
 	struct s_token	*prev;
 }					t_token;
 
-typedef struct s_env
+typedef struct s_words
 {
-	char			*key;
-	char			*value;
-	struct s_env	*next;
-}					t_env;
+	char			*word;
+	struct s_words	*next;
+}					t_words;
 
 // BUILD-IN FUNCTIONS
 int					ft_echo(char **commands, t_env **env);
@@ -80,5 +88,34 @@ void				ft_remove_var(char *input, t_env **env);
 void				show_unique_var(char *key, t_env **env, char **input,
 						int i);
 void				ft_verify_signals(char **av, int ac);
+void				free_mat(char **mat);
+int					matlen(char **mat);
+void				exec_command(t_token **head);
+
+// TOKEN FUNCTIONS
+char				*ft_strndup(const char *str, size_t n);
+int					get_type_fd(const char *operator);
+char				*filter_token(char *token);
+void				tokenize_utils(char *str, int *start, t_token **head,
+						int *i);
+void				tokenize(char *str, t_token **head);
+void				free_tokens(t_token *head);
+int					matlen(char **mat);
+void				free_mat(char **mat);
+void				ft_reader(t_words **words, char *stop_str);
+void				reader(char *stop_str, int type, int fd);
+void				initial_case(int prev_fd, t_token *temp, int pipefd[2]);
+void				case_type_2(t_token *temp);
+void				clean_node(t_token *temp);
+void				case_type_3_utils(t_token *temp, char **temp_mat, int t_fd);
+void				case_type_3(t_token *temp, int pipefd[2]);
+void				case_type_4(t_token *temp);
+void				exec_son_pid(t_token *temp, int *pipefd);
+void				exec_father(int *prev_fd, t_token *temp, int *pipefd,
+						pid_t pid);
+int					check_seg(t_token *temp);
+void				exec_command(t_token **head);
+void				add_word(t_words **wds, char *value);
+void				append_node(t_token **head, char *content, int type_fd);
 
 #endif

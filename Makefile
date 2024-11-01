@@ -6,7 +6,7 @@
 #    By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/01 08:43:12 by codespace         #+#    #+#              #
-#    Updated: 2024/10/28 09:42:03 by msalembe         ###   ########.fr        #
+#    Updated: 2024/11/01 09:57:07 by msalembe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,8 @@ NAME = minishell
 
 SRC = minishell.c actions.c utils.c \
 	list.c actions_1.c actions_2.c \
-	signal.c actions_3.c
+	signal.c actions_3.c token.c \
+	token_utils.c tokenization.c parse_token.c list_1.c
 
 CC = cc
 FLAGS = -Wall -Werror -Wextra

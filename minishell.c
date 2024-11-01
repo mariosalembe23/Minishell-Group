@@ -6,34 +6,34 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 19:07:57 by msalembe          #+#    #+#             */
-/*   Updated: 2024/10/29 08:44:17 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/01 12:08:32 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	has_other_delimiter(char *command)
-{
-	int			i;
-	const char	*operators[] = {"|", ">>", "<<", ">", "<", NULL};
-	int			len;
-	int			j;
+// static int	has_other_delimiter(char *command)
+// {
+// 	int			i;
+// 	const char	*operators[] = {"|", ">>", "<<", ">", "<", NULL};
+// 	int			len;
+// 	int			j;
 
-	i = -1;
-	while (command[++i] != '\0')
-	{
-		j = 0;
-		while (operators[j] != NULL)
-		{
-			len = strlen(operators[j]);
-			if (strncmp(&command[i], operators[j], len) == 0)
-				return (1);
-			j++;
-		}
-		i++;
-	}
-	return (0);
-}
+// 	i = -1;
+// 	while (command[++i] != '\0')
+// 	{
+// 		j = 0;
+// 		while (operators[j] != NULL)
+// 		{
+// 			len = strlen(operators[j]);
+// 			if (strncmp(&command[i], operators[j], len) == 0)
+// 				return (1);
+// 			j++;
+// 		}
+// 		i++;
+// 	}
+// 	return (0);
+// }
 
 static int	choose_command(t_general *general, char **commands, t_env **env)
 {
@@ -61,12 +61,15 @@ static int	choose_command(t_general *general, char **commands, t_env **env)
 static int	ft_execution(t_general *general, t_env **env)
 {
 	char	**commands;
-
-	if (has_other_delimiter(general->initial_command))
-	{
-		printf("has delimiter\n");
-		return (0);
-	}
+	t_token	*head;
+	
+	head = NULL;
+	//if (has_other_delimiter(general->initial_command))
+	//{
+		tokenize(general->initial_command, &head);
+		exec_command(&head);
+		return (1);
+	//}
 	general->commands = ft_split(general->initial_command, ' ');
 	commands = general->commands;
 	if (!choose_command(general, commands, env))
@@ -91,7 +94,6 @@ static void	init_proccess(t_general *general, t_env **env)
 		}
 		else
 		{
-			printf("exit\n");
 			free(general->initial_command);
 			exit(1);
 		}
@@ -103,10 +105,9 @@ int	main(int ac, char **av, char **ev)
 	t_env		*env;
 	t_general	general;
 
-	// t_token		*token;
+
 	(void)ac;
 	(void)av;
-	// general.token = malloc(sizeof(t_token));
 	general.env = NULL;
 	ft_verify_signals(av, ac);
 	ft_copy_vars(&general, ev);
