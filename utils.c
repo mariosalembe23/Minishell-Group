@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 14:35:32 by msalembe          #+#    #+#             */
-/*   Updated: 2024/10/25 16:29:15 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/05 16:32:38 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	show_vars(t_env **env, int sig)
 	(void)sig;
 	tmp = *env;
 	if (tmp == NULL)
-		return ;
+		printf("No variables\n");
 	while (tmp != NULL)
 	{
 		if (ft_strcmp(tmp->value, ""))

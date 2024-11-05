@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 19:07:57 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/01 15:19:50 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/05 19:32:16 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,25 @@ static void	init_proccess(t_general *general, t_env **env)
 	}
 }
 
+static void	ft_add_varenv(char **commands, t_env **env)
+{
+	int		i;
+	char	*key;
+	char	*value;
+
+	i = 1;
+	while (commands[i])
+	{
+		key = find_key(commands[i]);
+		value = find_value(commands[i]);
+		if (value == NULL)
+			value = ft_strdup("");
+		add_new_var(env, key, value);
+		free(key);
+		i++;
+	}
+}
+
 int	main(int ac, char **av, char **ev)
 {
 	t_env		*env;
@@ -106,7 +125,9 @@ int	main(int ac, char **av, char **ev)
 
 	(void)ac;
 	(void)av;
-	general.env = NULL;
+	env = NULL;
+	general.env = env;
+	ft_add_varenv(ev, &env);
 	ft_verify_signals(av, ac);
 	ft_copy_vars(&general, ev);
 	init_proccess(&general, &env);

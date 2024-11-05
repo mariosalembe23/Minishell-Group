@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   actions_1.c                                        :+:      :+:    :+:   */
+/*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/25 14:20:13 by msalembe          #+#    #+#             */
-/*   Updated: 2024/10/31 14:46:09 by msalembe         ###   ########.fr       */
+/*   Created: 2024/11/05 19:16:59 by msalembe          #+#    #+#             */
+/*   Updated: 2024/11/05 19:17:46 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,61 +97,41 @@ void	execute_without_flag(char **input, char *key, t_env **env)
 	}
 }
 
-int	ft_env(char **commands, char **envs, t_env **env)
+static void	ft_echo_utils(int has_flag, char **input, t_env **env)
 {
-	int	i;
+	char	*key;
 
-	if (commands[1])
-	{
-		printf("Too arguments for env\n");
-		return (1);
-	}
-	i = -1;
-	while (envs[++i])
-		printf("%s\n", envs[i]);
-	show_vars_env(env, 1);
-	return (1);
+	key = NULL;
+	if (!has_flag)
+		execute_with_flag(input, key, env);
+	else
+		execute_without_flag(input, key, env);
 }
 
-int	verify_key(char *key, char **envs)
+int	ft_echo(char **commands, t_env **env)
 {
+	int		has_flag;
+	char	**input;
 	int		i;
-	char	*original_key;
+	int		x;
 
-	i = 0;
-	while (envs[i])
-	{
-		original_key = find_key(envs[i]);
-		if (ft_strcmp(key, original_key) == 0)
-		{
-			free(envs[i]);
-			while (envs[i + 1])
-			{
-				envs[i] = envs[i + 1];
-				i++;
-			}
-			envs[i] = NULL;
-			return (1);
-		}
-		i++;
-	}
-	return (0);
-}
-
-int	ft_unset(char **commands, t_env **env, char **envs)
-{
-	int	i;
-	int	result;
-
+	has_flag = 0;
+	input = commands;
 	i = 1;
-	result = 0;
-	while (commands[i])
+	if (!input[i])
+		return (printf("\n"));
+	if (input[i][0] == '-')
 	{
-		if (verify_key(commands[i], envs))
-			result = 1;
-		if (result != 1)
-			ft_remove_var(commands[i], env);
-		i++;
+		x = 1;
+		while (input[i][x])
+		{
+			if (input[i][x] != 'n')
+				has_flag = 1;
+			x++;
+		}
 	}
+	else
+		has_flag = 1;
+	ft_echo_utils(has_flag, input, env);
 	return (1);
 }

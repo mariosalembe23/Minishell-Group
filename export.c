@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   actions_2.c                                        :+:      :+:    :+:   */
+/*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/25 17:18:09 by msalembe          #+#    #+#             */
-/*   Updated: 2024/10/29 08:22:07 by msalembe         ###   ########.fr       */
+/*   Created: 2024/11/05 19:18:49 by msalembe          #+#    #+#             */
+/*   Updated: 2024/11/05 19:19:12 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,48 +57,50 @@ int	ft_initial_checker(char *input)
 	return (1);
 }
 
-static void	ft_add_varenv(char **commands, t_env **env)
-{
-	int		i;
-	char	*key;
-	char	*value;
+// static void	ft_add_varenv(char **commands, t_env **env)
+// {
+// 	int		i;
+// 	char	*key;
+// 	char	*value;
 
-	i = 1;
-	while (commands[i])
-	{
-		key = find_key(commands[i]);
-		value = find_value(commands[i]);
-		if (value == NULL)
-			value = ft_strdup("");
-		add_new_var(env, key, value);
-		free(key);
-		i++;
-	}
-}
+// 	i = 1;
+// 	while (commands[i])
+// 	{
+// 		key = find_key(commands[i]);
+// 		value = find_value(commands[i]);
+// 		if (value == NULL)
+// 			value = ft_strdup("");
+// 		add_new_var(env, key, value);
+// 		free(key);
+// 		i++;
+// 	}
+// }
 
 int	ft_export(char **commands, char **envs, t_env **env)
 {
-	int		i;
+	//int		i;
 	char	**input;
 
 	input = commands;
+	(void)envs;
 	if (!input[1])
 	{
-		i = -1;
-		while (envs[++i])
-			printf("declare -x %s\n", envs[i]);
+		//i = -1;
+		// while (envs[++i])
+		// 	printf("declare -x %s\n", envs[i]);
 		show_vars(env, 1);
 	}
 	else
 	{
-		i = 1;
+		int i = 1;
 		while (input[i])
 		{
 			if (!ft_initial_checker(input[i]))
 				return (1);
+			printf("declare -x %s\n", input[i]);
+			add_new_var(env, find_key(input[i]), find_value(input[i]));
 			i++;
 		}
-		ft_add_varenv(commands, env);
 	}
 	return (1);
 }

@@ -6,16 +6,16 @@
 #    By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/01 08:43:12 by codespace         #+#    #+#              #
-#    Updated: 2024/11/01 09:57:07 by msalembe         ###   ########.fr        #
+#    Updated: 2024/11/05 19:22:08 by msalembe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
 NAME = minishell
 
-SRC = minishell.c actions.c utils.c \
-	list.c actions_1.c actions_2.c \
-	signal.c actions_3.c token.c \
+SRC = minishell.c echo.c pwd.c  utils.c \
+	list.c env.c exit.c export.c \
+	signal.c token.c unset.c cd.c \
 	token_utils.c tokenization.c parse_token.c list_1.c
 
 CC = cc

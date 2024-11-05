@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgermano <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 17:25:15 by msalembe          #+#    #+#             */
-/*   Updated: 2024/10/25 17:25:24 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/05 13:23:04 by dgermano         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static void	handler(int signum)
 	if (signum == SIGINT)
 	{
 		printf("\n");
-		rl_on_new_line();
+		rl_replace_line("", 0);
 		rl_redisplay();
 	}
 }
