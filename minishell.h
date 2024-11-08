@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 19:08:32 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/01 15:35:25 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/08 14:02:47 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
+# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
@@ -33,7 +34,6 @@
 # define FILE_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
 # define t_file "/tmp/minishel_trash.tmp"
 
-
 typedef struct s_general
 {
 	char			*initial_command;
@@ -41,6 +41,8 @@ typedef struct s_general
 	char			**envs;
 	struct s_token	*token;
 	struct s_env	*env;
+	struct s_var	**var;
+	struct s_filter	*filter;
 }					t_general;
 
 typedef struct s_env
@@ -50,10 +52,18 @@ typedef struct s_env
 	struct s_env	*next;
 }					t_env;
 
+typedef struct s_var
+{
+	char			*key;
+	char			*value;
+	struct s_var	*next;
+}					t_var;
+
 typedef struct s_token
 {
 	int				seg;
 	int				type_fd;
+	int				quoted;
 	char			*content;
 	char			**command;
 	struct s_token	*next;
@@ -66,15 +76,22 @@ typedef struct s_words
 	struct s_words	*next;
 }					t_words;
 
+typedef struct s_filter
+{
+	char			*filtered;
+	int				quote;
+	struct s_filter	*next;
+}					t_filter;
+
 // BUILD-IN FUNCTIONS
-int					ft_echo(char **commands, t_env **env);
-int					ft_pwd(char **commands);
-int					ft_cd(char **commands);
-int					ft_env(char **commands, char **envs, t_env **env);
-int					ft_export(char **commands, char **envs, t_env **env);
-int					ft_unset(char **commands, t_env **env, char **envs);
-int					ft_exit(t_general *general);
-int					ft_any_command(void);
+int					ft_echo(char **commands, t_env **env, int sig);
+int					ft_pwd(char **commands, int sig);
+int					ft_cd(char **commands, int sig);
+int					ft_env(char **commands, t_var **var, int sig);
+int					ft_export(char **commands, t_general *general, int sig);
+int					ft_unset(char **commands, t_var **env);
+int					ft_exit(t_general *general, int sig, char **commands);
+int					ft_any_command(char *str);
 
 // AUXILIARY FUNCTIONS
 void				execute_with_flag(char **input, char *key, t_env **env);
@@ -82,15 +99,29 @@ void				execute_without_flag(char **input, char *key, t_env **env);
 char				*find_value(const char *str);
 char				*find_key(const char *str);
 void				ft_copy_vars(t_general *general, char **ev);
-void				show_vars(t_env **env, int sig);
-void				add_new_var(t_env **env, char *key, char *value);
-void				show_vars_env(t_env **env, int sig);
-void				ft_remove_var(char *input, t_env **env);
+void				show_vars(t_var **env, int sig);
+void				add_new_var(t_var **env, char *key, char *value);
+void				show_vars_env(t_var **env, int sig);
+void				ft_remove_var(char *input, t_var **env);
 void				show_unique_var(char *key, t_env **env, char **input,
 						int i);
-void				ft_verify_signals(char **av, int ac);
+void				ft_verify_signals();
 void				free_mat(char **mat);
 int					matlen(char **mat);
+char				*first_word(char *str, char delim);
+void				extract_tokens(t_token **head, t_general *general);
+int					process_command(t_token **head);
+char				*join_struct(t_filter **head);
+void				alloc_filter_1(t_filter **head, t_filter **past, char *str,
+						int *i);
+void				alloc_filter_2(t_filter **head, t_filter **past, char *str,
+						int *i);
+void				create_filter(char *str, t_filter **head);
+char				*extract_quote_2(char *str);
+char				*extract_quote_1(char *str);
+char				*extract_quote_0(char *str);
+void				alloc_filter_3(t_filter **head, t_filter **past, char *str,
+						int *i);
 
 // TOKEN FUNCTIONS
 char				*ft_strndup(const char *str, size_t n);
@@ -113,10 +144,14 @@ void				case_type_4(t_token *temp);
 void				exec_son_pid(t_token *temp, int *pipefd,
 						t_general *general);
 void				exec_father(int *prev_fd, t_token *temp, int *pipefd,
-						pid_t pid);
+						pid_t pid, t_general *general);
 int					check_seg(t_token *temp);
 void				exec_command(t_token **head, t_general *general);
 void				add_word(t_words **wds, char *value);
 void				append_node(t_token **head, char *content, int type_fd);
+void				ft_add_var(t_var **var, char **ev);
+
+void				init_proccess(t_general *general);
+void				write_in_file(int status);
 
 #endif

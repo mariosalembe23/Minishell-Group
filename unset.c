@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 19:20:25 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/05 19:20:51 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/08 11:18:56 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,20 +37,16 @@ int	verify_key(char *key, char **envs)
 	return (0);
 }
 
-int	ft_unset(char **commands, t_env **env, char **envs)
+int	ft_unset(char **commands, t_var **var)
 {
-	int i;
-	int result;
+	int	i;
 
 	i = 1;
-	result = 0;
 	while (commands[i])
 	{
-		if (verify_key(commands[i], envs))
-			result = 1;
-		if (result != 1)
-			ft_remove_var(commands[i], env);
+		char *key = find_key(commands[i]);
+		ft_remove_var(key, var);
 		i++;
 	}
-	return (1);
+	return (0);
 }

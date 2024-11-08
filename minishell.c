@@ -6,113 +6,80 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 19:07:57 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/05 19:32:16 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/08 14:03:12 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// static int	has_other_delimiter(char *command)
-// {
-// 	int			i;
-// 	const char	*operators[] = {"|", ">>", "<<", ">", "<", NULL};
-// 	int			len;
-// 	int			j;
 
-// 	i = -1;
-// 	while (command[++i] != '\0')
-// 	{
-// 		j = 0;
-// 		while (operators[j] != NULL)
-// 		{
-// 			len = strlen(operators[j]);
-// 			if (strncmp(&command[i], operators[j], len) == 0)
-// 				return (1);
-// 			j++;
-// 		}
-// 		i++;
-// 	}
-// 	return (0);
-// }
 
-static int	choose_command(t_general *general, char **commands, t_env **env)
+static int	ft_execution(t_general *general)
 {
-	if (general->initial_command[0] == '\0')
-		return (1);
-	else if (ft_strcmp(commands[0], "echo") == 0)
-		return (ft_echo(commands, env));
-	else if (ft_strcmp(commands[0], "pwd") == 0)
-		return (ft_pwd(commands));
-	else if (ft_strcmp(commands[0], "cd") == 0)
-		return (ft_cd(commands));
-	else if (ft_strcmp(commands[0], "env") == 0)
-		return (ft_env(commands, general->envs, env));
-	else if (ft_strcmp(commands[0], "export") == 0)
-		return (ft_export(commands, general->envs, env));
-	else if (ft_strcmp(commands[0], "unset") == 0)
-		return (ft_unset(general->commands, env, general->envs));
-	else if (ft_strcmp(commands[0], "exit") == 0)
-		return (ft_exit(general));
-	else
-		return (ft_any_command());
-	return (0);
-}
-
-static int	ft_execution(t_general *general, t_env **env)
-{
-	char	**commands;
 	t_token	*head;
 
 	head = NULL;
 	general->commands = ft_split(general->initial_command, ' ');
-	commands = general->commands;
-	if (ft_strcmp(commands[0], "exit") == 0)
-		return (ft_exit(general));
 	tokenize(general->initial_command, &head);
+	if (process_command(&head))
+		return (1);
 	exec_command(&head, general);
-	return (1);
-	if (!choose_command(general, commands, env))
-		return (0);
 	return (1);
 }
 
-static void	init_proccess(t_general *general, t_env **env)
+static int	is_empty(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] != ' ')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void	init_proccess(t_general *general)
 {
 	while (1)
 	{
-		general->initial_command = readline("\033[1;36mminishell$ \033[1;0m");
-		if (general->initial_command)
+			general->initial_command = readline("\033[1;36mminishell$ \033[1;0m");
+		if (general->initial_command == NULL)
 		{
-			add_history(general->initial_command);
-			if (!ft_execution(general, env))
-			{
-				printf("ERROR\n");
-				exit(1);
-			}
-			free(general->initial_command);
+			ft_exit(general, 1, general->commands);
+			exit(0);
 		}
-		else
+		if (is_empty(general->initial_command))
+		{
+			free(general->initial_command);
+			continue ;
+		}
+		add_history(general->initial_command);
+		if (!ft_execution(general))
 		{
 			free(general->initial_command);
 			exit(1);
 		}
+		free(general->initial_command);
 	}
 }
 
-static void	ft_add_varenv(char **commands, t_env **env)
+void	ft_add_var(t_var **var, char **ev)
 {
 	int		i;
 	char	*key;
 	char	*value;
 
 	i = 1;
-	while (commands[i])
+	while (ev[i])
 	{
-		key = find_key(commands[i]);
-		value = find_value(commands[i]);
+		key = find_key(ev[i]);
+		value = find_value(ev[i]);
 		if (value == NULL)
 			value = ft_strdup("");
-		add_new_var(env, key, value);
+		add_new_var(var, key, value);
 		free(key);
 		i++;
 	}
@@ -120,15 +87,15 @@ static void	ft_add_varenv(char **commands, t_env **env)
 
 int	main(int ac, char **av, char **ev)
 {
-	t_env		*env;
 	t_general	general;
-
+	
 	(void)ac;
 	(void)av;
-	env = NULL;
-	general.env = env;
-	ft_add_varenv(ev, &env);
-	ft_verify_signals(av, ac);
+	general.var = malloc(sizeof(t_var *));
+	ft_add_var(general.var, ev);
+	if (access(".data", F_OK) == 0)
+		write_in_file(0);
 	ft_copy_vars(&general, ev);
-	init_proccess(&general, &env);
+	ft_verify_signals();
+	init_proccess(&general);
 }

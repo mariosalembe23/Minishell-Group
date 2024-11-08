@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 19:18:49 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/05 19:19:12 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/08 13:17:55 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,14 @@ static int	is_valid_key(const char *key)
 	return (1);
 }
 
-static int	process_export(const char *input)
+static int	process_export(char *input, int sig)
 {
 	char	*key;
 
 	key = find_key(input);
-	if (key)
+	if (key && sig)
 	{
-		if (!is_valid_key(key))
+		if (!is_valid_key(key) && sig)
 		{
 			printf("bash: export: '%s' not a valid identifier\n", key);
 			free(key);
@@ -44,63 +44,66 @@ static int	process_export(const char *input)
 	}
 	else
 	{
-		printf("bash: export: Error Key\n");
-		return (0);
-	}
-	return (1);
-}
-
-int	ft_initial_checker(char *input)
-{
-	if (!process_export((const char *)input))
-		return (0);
-	return (1);
-}
-
-// static void	ft_add_varenv(char **commands, t_env **env)
-// {
-// 	int		i;
-// 	char	*key;
-// 	char	*value;
-
-// 	i = 1;
-// 	while (commands[i])
-// 	{
-// 		key = find_key(commands[i]);
-// 		value = find_value(commands[i]);
-// 		if (value == NULL)
-// 			value = ft_strdup("");
-// 		add_new_var(env, key, value);
-// 		free(key);
-// 		i++;
-// 	}
-// }
-
-int	ft_export(char **commands, char **envs, t_env **env)
-{
-	//int		i;
-	char	**input;
-
-	input = commands;
-	(void)envs;
-	if (!input[1])
-	{
-		//i = -1;
-		// while (envs[++i])
-		// 	printf("declare -x %s\n", envs[i]);
-		show_vars(env, 1);
-	}
-	else
-	{
-		int i = 1;
-		while (input[i])
+		if (sig)
 		{
-			if (!ft_initial_checker(input[i]))
-				return (1);
-			printf("declare -x %s\n", input[i]);
-			add_new_var(env, find_key(input[i]), find_value(input[i]));
-			i++;
+			printf("bash: export: Error Key\n");
+			return (0);
 		}
 	}
 	return (1);
+}
+
+char	**add_var_env(char ***envs, char **commands)
+{
+	int		len;
+	char	**new_mat;
+	int		i;
+	int		x;
+
+	len = matlen(*envs);
+	new_mat = malloc(sizeof(char *) * (len + matlen(commands) + 1));
+	if (!new_mat)
+		return (NULL);
+	i = -1;
+	while ((*envs)[++i])
+	{
+		new_mat[i] = ft_strdup((*envs)[i]);
+		i++;
+	}
+	x = -1;
+	while (commands[++x])
+	{
+		new_mat[i] = ft_strdup(commands[x]);
+		i++;
+	}
+	new_mat[i] = NULL;
+	free_mat(*envs);
+	*envs = new_mat;
+	return (new_mat);
+}
+
+int	ft_export(char **commands, t_general *general, int sig)
+{
+	char	**input;
+	int		i;
+
+	input = commands;
+	i = 0;
+	if (!input[1] && sig)
+		show_vars(general->var, 0);
+	else
+	{
+		i = 1;
+		while (input[i])
+		{
+			if (!process_export(input[i], sig))
+				return (1);
+			i++;
+		}
+		i = 0;
+		while (input[++i])
+			add_new_var(general->var, find_key(input[i]), find_value(input[i]));
+		*general->var = *general->var;
+	}
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 14:35:32 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/05 16:32:38 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/08 13:16:46 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,9 @@ char	*find_value(const char *str)
 
 	if (!str)
 		return (NULL);
-	equal_sign = strchr(str, '=');
+	equal_sign = ft_strchr(str, '=');
 	if (!equal_sign)
 		return (NULL);
-	if (equal_sign[1] == '\0')
-	{
-		equal_sign = strdup("\"\"");
-		return (equal_sign);
-	}
 	return (equal_sign + 1);
 }
 
@@ -59,13 +54,13 @@ void	ft_copy_vars(t_general *general, char **ev)
 		;
 	general->envs = malloc(sizeof(char *) * (count + 1));
 	while (ev[++i])
-		general->envs[i] = strdup(ev[i]);
+		general->envs[i] = ft_strdup(ev[i]);
 	general->envs[i] = NULL;
 }
 
-void	show_vars(t_env **env, int sig)
+void	show_vars(t_var **env, int sig)
 {
-	t_env	*tmp;
+	t_var	*tmp;
 
 	(void)sig;
 	tmp = *env;
@@ -73,26 +68,25 @@ void	show_vars(t_env **env, int sig)
 		printf("No variables\n");
 	while (tmp != NULL)
 	{
-		if (ft_strcmp(tmp->value, ""))
-			printf("declare -x %s=%s\n", tmp->key, tmp->value);
+		if (tmp->value != NULL)
+			printf("declare -x %s=\"%s\"\n", tmp->key, tmp->value);
 		else
 			printf("declare -x %s\n", tmp->key);
 		tmp = tmp->next;
 	}
 }
 
-void	show_vars_env(t_env **env, int sig)
+void	show_vars_env(t_var **env, int sig)
 {
-	t_env	*tmp;
+	t_var	*tmp;
 
-	(void)sig;
 	tmp = *env;
+	(void)sig;
 	if (tmp == NULL)
 		return ;
 	while (tmp != NULL)
 	{
-		if (tmp->value != NULL && ft_strcmp(tmp->value, "\"\"") != 0
-			&& ft_strlen(tmp->value) > 0)
+		if (tmp->value != NULL)
 			printf("%s=%s\n", tmp->key, tmp->value);
 		tmp = tmp->next;
 	}

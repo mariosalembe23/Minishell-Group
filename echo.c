@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 19:16:59 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/05 19:17:46 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/08 11:08:13 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,9 +106,10 @@ static void	ft_echo_utils(int has_flag, char **input, t_env **env)
 		execute_with_flag(input, key, env);
 	else
 		execute_without_flag(input, key, env);
+	write_in_file(0);
 }
 
-int	ft_echo(char **commands, t_env **env)
+int	ft_echo(char **commands, t_env **env, int sig)
 {
 	int		has_flag;
 	char	**input;
@@ -118,6 +119,8 @@ int	ft_echo(char **commands, t_env **env)
 	has_flag = 0;
 	input = commands;
 	i = 1;
+	if (sig == 0)
+		return (0);
 	if (!input[i])
 		return (printf("\n"));
 	if (input[i][0] == '-')
@@ -133,5 +136,5 @@ int	ft_echo(char **commands, t_env **env)
 	else
 		has_flag = 1;
 	ft_echo_utils(has_flag, input, env);
-	return (1);
+	return (0);
 }

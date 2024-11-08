@@ -2,6 +2,8 @@
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
         "PWD.C": "cpp",
-        "minishell.h": "c"
+        "minishell.h": "c",
+        "readline.h": "c",
+        "stdlib.h": "c"
     }
 }

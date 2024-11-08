@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 19:19:40 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/05 19:20:03 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/06 16:40:47 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,14 @@ static void	auxiliary(t_general *general)
 	}
 }
 
-static int	ft_exit_utils(char *str, t_general *general)
+static int	ft_exit_utils(char *str, char **commands, int sig)
 {
 	while (*str)
 	{
-		if (!ft_isdigit(*str))
+		if (!ft_isdigit(*str) && sig)
 		{
 			printf("bash: exit: %s: numeric argument required\n",
-				general->commands[1]);
+				commands[1]);
 			return (0);
 		}
 		str++;
@@ -52,19 +52,19 @@ static int	ft_exit_utils(char *str, t_general *general)
 	return (1);
 }
 
-static int	verify_args(char *filename, t_general *general)
+static int	verify_args(char *filename, char **commands, int sig)
 {
 	int		fd;
 	char	*str;
 
 	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC,
 			S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-	if (general->commands[1])
+	if (commands[1]  && sig)
 	{
-		str = general->commands[1];
-		if (!ft_exit_utils(str, general))
+		str = commands[1];
+		if (!ft_exit_utils(str, commands, sig))
 			return (0);
-		if (fd == -1)
+		if (fd == -1 && sig)
 		{
 			perror("Erro ao abrir o arquivo");
 			exit(EXIT_FAILURE);
@@ -81,14 +81,14 @@ static int	verify_args(char *filename, t_general *general)
 	return (1);
 }
 
-int	ft_exit(t_general *general)
+int	ft_exit(t_general *general, int sig, char **commands)
 {
 	int		i;
 	char	*filename;
 
 	i = -1;
 	filename = ".data";
-	if (!verify_args(filename, general))
+	if (!verify_args(filename, commands, sig))
 		return (1);
 	if (general->initial_command)
 		free(general->initial_command);
@@ -99,12 +99,13 @@ int	ft_exit(t_general *general)
 		free(general->commands);
 	}
 	auxiliary(general);
-	printf("exit\n");
+	if (sig)
+		printf("exit\n");
 	exit(0);
 }
 
-int	ft_any_command(void)
+int	ft_any_command(char *str)
 {
-	printf("bash: command not found\n");
+	printf("bash: %s: command not found\n", str);
 	return (1);
 }
