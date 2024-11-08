@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 19:08:32 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/08 14:02:47 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/08 15:20:54 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ typedef struct s_filter
 }					t_filter;
 
 // BUILD-IN FUNCTIONS
-int					ft_echo(char **commands, t_env **env, int sig);
+int					ft_echo(char **commands, int sig);
 int					ft_pwd(char **commands, int sig);
 int					ft_cd(char **commands, int sig);
 int					ft_env(char **commands, t_var **var, int sig);
@@ -93,9 +93,17 @@ int					ft_unset(char **commands, t_var **env);
 int					ft_exit(t_general *general, int sig, char **commands);
 int					ft_any_command(char *str);
 
+// TOKENIZARIONS RETURNS
+int					execute_echo(char **commands, int sig);
+int					execute_pwd(char **commands, int sig);
+int					execute_cd(char **commands, int sig);
+int					execute_env(char **commands, t_general *general, int sig);
+int					execute_export(char **commands, t_general *general,
+						int sig);
+int					execute_unset(char **commands, t_general *general, int sig);
+int					execute_exit(t_general *general, int sig, char **commands);
+
 // AUXILIARY FUNCTIONS
-void				execute_with_flag(char **input, char *key, t_env **env);
-void				execute_without_flag(char **input, char *key, t_env **env);
 char				*find_value(const char *str);
 char				*find_key(const char *str);
 void				ft_copy_vars(t_general *general, char **ev);
@@ -105,7 +113,7 @@ void				show_vars_env(t_var **env, int sig);
 void				ft_remove_var(char *input, t_var **env);
 void				show_unique_var(char *key, t_env **env, char **input,
 						int i);
-void				ft_verify_signals();
+void				ft_verify_signals(void);
 void				free_mat(char **mat);
 int					matlen(char **mat);
 char				*first_word(char *str, char delim);
@@ -125,33 +133,28 @@ void				alloc_filter_3(t_filter **head, t_filter **past, char *str,
 
 // TOKEN FUNCTIONS
 char				*ft_strndup(const char *str, size_t n);
-int					get_type_fd(const char *operator);
 char				*filter_token(char *token);
-void				tokenize_utils(char *str, int *start, t_token **head,
-						int *i);
 void				tokenize(char *str, t_token **head);
 void				free_tokens(t_token *head);
 int					matlen(char **mat);
 void				free_mat(char **mat);
-void				ft_reader(t_words **words, char *stop_str);
 void				reader(char *stop_str, int type, int fd);
 void				initial_case(int prev_fd, t_token *temp, int pipefd[2]);
 void				case_type_2(t_token *temp);
-void				clean_node(t_token *temp);
-void				case_type_3_utils(t_token *temp, char **temp_mat, int t_fd);
 void				case_type_3(t_token *temp, int pipefd[2]);
 void				case_type_4(t_token *temp);
-void				exec_son_pid(t_token *temp, int *pipefd,
-						t_general *general);
-void				exec_father(int *prev_fd, t_token *temp, int *pipefd,
-						pid_t pid, t_general *general);
 int					check_seg(t_token *temp);
 void				exec_command(t_token **head, t_general *general);
 void				add_word(t_words **wds, char *value);
 void				append_node(t_token **head, char *content, int type_fd);
 void				ft_add_var(t_var **var, char **ev);
+char				*apply_var_value(char *str, char *pos, t_general *general);
+void				extract_pid(char **str);
 
 void				init_proccess(t_general *general);
 void				write_in_file(int status);
+void				execute_not_filtred(t_token *temp, t_general *general);
+void				execute_filtred(t_token *temp, char *filtred,
+						t_general *general);
 
 #endif

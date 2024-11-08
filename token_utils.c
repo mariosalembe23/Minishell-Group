@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgermano <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 08:35:46 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/05 14:00:30 by dgermano         ###   ########.fr       */
+/*   Updated: 2024/11/08 15:03:18 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	case_type_2(t_token *temp)
 	close(fd);
 }
 
-void	clean_node(t_token *temp)
+static void	clean_node(t_token *temp)
 {
 	t_token	*trash;
 
@@ -58,7 +58,7 @@ void	clean_node(t_token *temp)
 	}
 }
 
-void	case_type_3_utils(t_token *temp, char **temp_mat, int t_fd)
+static void	case_type_3_utils(t_token *temp, char **temp_mat, int t_fd)
 {
 	char	*trash_content;
 

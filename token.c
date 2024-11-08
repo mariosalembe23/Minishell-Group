@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgermano <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 08:33:21 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/01 16:04:49 by dgermano         ###   ########.fr       */
+/*   Updated: 2024/11/08 15:04:47 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,7 @@ int	matlen(char **mat)
 
 	len = 0;
 	while (mat[len] != NULL)
-	{
 		len++;
-	}
 	return (len);
 }
 
@@ -52,7 +50,7 @@ void	free_mat(char **mat)
 	free(mat);
 }
 
-void	ft_reader(t_words **words, char *stop_str)
+static void	ft_reader(t_words **words, char *stop_str)
 {
 	char	*temp;
 

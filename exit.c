@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 19:19:40 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/06 16:40:47 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/08 15:37:57 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,13 @@ static void	auxiliary(t_general *general)
 	}
 }
 
-static int	ft_exit_utils(char *str, char **commands, int sig)
+static int	ft_exit_utils(char *str, int sig)
 {
 	while (*str)
 	{
 		if (!ft_isdigit(*str) && sig)
 		{
-			printf("bash: exit: %s: numeric argument required\n",
-				commands[1]);
+			printf("bash: exit: %s: numeric argument required\n", str);
 			return (0);
 		}
 		str++;
@@ -52,44 +51,50 @@ static int	ft_exit_utils(char *str, char **commands, int sig)
 	return (1);
 }
 
-static int	verify_args(char *filename, char **commands, int sig)
-{
-	int		fd;
-	char	*str;
+// static int	verify_args(char *filename, char **commands, int sig)
+// {
+// 	int		fd;
+// 	char	*str;
 
-	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC,
-			S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-	if (commands[1]  && sig)
-	{
-		str = commands[1];
-		if (!ft_exit_utils(str, commands, sig))
-			return (0);
-		if (fd == -1 && sig)
-		{
-			perror("Erro ao abrir o arquivo");
-			exit(EXIT_FAILURE);
-		}
-		write(fd, str, ft_strlen(str));
-		close(fd);
-	}
-	else
-	{
-		write(fd, "0", 1);
-		close(fd);
-		exit(0);
-	}
-	return (1);
-}
+// 	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC,
+// 			S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+// 	if (commands[1] && sig)
+// 	{
+// 		str = commands[1];
+// 		if (!ft_exit_utils(str, commands, sig))
+// 			return (0);
+// 		if (fd == -1 && sig)
+// 		{
+// 			perror("Erro ao abrir o arquivo");
+// 			exit(EXIT_FAILURE);
+// 		}
+// 		write(fd, str, ft_strlen(str));
+// 		close(fd);
+// 	}
+// 	else
+// 	{
+// 		write(fd, "0", 1);
+// 		close(fd);
+// 		exit(0);
+// 	}
+// 	return (1);
+// }
 
 int	ft_exit(t_general *general, int sig, char **commands)
 {
-	int		i;
-	char	*filename;
+	int	i;
 
 	i = -1;
-	filename = ".data";
-	if (!verify_args(filename, commands, sig))
+	//printf("%s\n", commands[1]);
+	if (commands[1] && ft_exit_utils(commands[1], sig) && sig)
+		write_in_file(ft_atoi(commands[1]));
+	else if (commands[1] && !ft_exit_utils(commands[i], sig) && sig)
+	{
+		printf("bash: exit: %s: numeric argument required\n", commands[1]);
 		return (1);
+	}
+	else
+		write_in_file(0);
 	if (general->initial_command)
 		free(general->initial_command);
 	if (general->commands)

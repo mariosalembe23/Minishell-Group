@@ -6,33 +6,13 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 08:38:31 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/01 09:50:03 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/08 15:00:05 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-const char			*oprs[] = {"|", ">>", "<<", ">", NULL};
-
-char	*ft_strndup(const char *str, size_t n)
-{
-	char	*new_str;
-	size_t	i;
-
-	if (str == NULL)
-		return (NULL);
-	new_str = (char *)malloc(n + 1);
-	if (new_str == NULL)
-		return (NULL);
-	for (i = 0; i < n && str[i] != '\0'; i++)
-	{
-		new_str[i] = str[i];
-	}
-	new_str[i] = '\0';
-	return (new_str);
-}
-
-int	get_type_fd(const char *operator)
+static int	get_type_fd(const char *operator)
 {
 	if (strcmp(operator, "|") == 0)
 		return (1);
@@ -74,11 +54,18 @@ char	*filter_token(char *token)
 	return (token);
 }
 
-void	tokenize_utils(char *str, int *start, t_token **head, int *i)
+static void	ft_increment(int found, int *i)
 {
-	int	found;
-	int	j;
-	int	len;
+	if (!found)
+		(*i)++;
+}
+
+static void	tokenize_utils(char *str, int *start, t_token **head, int *i)
+{
+	int			found;
+	int			j;
+	int			len;
+	const char	*oprs[] = {"|", ">>", "<<", ">", NULL};
 
 	while (str[*i] != '\0')
 	{
@@ -98,8 +85,7 @@ void	tokenize_utils(char *str, int *start, t_token **head, int *i)
 				break ;
 			}
 		}
-		if (!found)
-			(*i)++;
+		ft_increment(found, i);
 	}
 }
 

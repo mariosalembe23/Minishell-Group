@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 17:25:15 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/08 14:01:33 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/08 14:30:38 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,16 @@ static void	handler(int signum)
 	}
 }
 
-void ft_verify_signals(int *sig)
+void	ft_verify_signals(void)
 {
-    if (signal(SIGINT, handler) == SIG_ERR)
-    {
-        perror("Erro ao configurar manipulador de SIGINT");
-        exit(1);
-    }
-	(void)sig;
-
-    if (signal(SIGQUIT, SIG_IGN) == SIG_ERR)
-    {
-        perror("Erro ao configurar manipulador de SIGQUIT");
-        exit(1);
-    }
+	if (signal(SIGINT, handler) == SIG_ERR)
+	{
+		perror("Erro ao configurar manipulador de SIGINT");
+		exit(1);
+	}
+	if (signal(SIGQUIT, SIG_IGN) == SIG_ERR)
+	{
+		perror("Erro ao configurar manipulador de SIGQUIT");
+		exit(1);
+	}
 }

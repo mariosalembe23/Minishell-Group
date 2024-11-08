@@ -6,7 +6,7 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 15:00:52 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/08 14:12:47 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/08 14:52:50 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,107 +33,28 @@ void	extract_pid(char **str)
 	free(*str);
 	*str = temp;
 }
-void	extract_case(char **str)
-{
-	int		fd;
-	char	*f_value;
-	char	*value;
-	char	*temp;
-	char	*temp2;
-	int		i;
 
-	f_value = (char *)malloc(sizeof(char) * 4);
-	f_value[3] = '\0';
-	if (access(".data", F_OK) == -1)
-	{
-		fd = open(".data", O_WRONLY | O_CREAT | O_TRUNC, FILE_MODE);
-		write(fd, "0", 1);
-		close(fd);
-	}
-	else
-	{
-		fd = open(".data", O_RDONLY);
-		read(fd, f_value, 4);
-		close(fd);
-	}
-	value = f_value;
-	temp = first_word(*str, '$');
-	i = 0;
-	while ((*str)[i] && (*str)[i] != '$')
-		i++;
-	while ((*str)[i] && (*str)[i] != ' ')
-		i++;
-	temp2 = ft_strjoin(temp, value);
-	free(temp);
-	temp = ft_strjoin(temp2, &((*str)[i]));
-	free(temp2);
-	free(*str);
-	*str = temp;
-	close(fd);
-}
-void	extract_value(char **str, char *env)
+static void	extract_quote_utils(int *i, char *str, t_filter *cur,
+		t_general *general)
 {
-	char	*value;
-	char	*temp;
-	char	*temp2;
-	int		i;
+	char	*new_content;
 
-	value = find_value(env);
-	temp = first_word(*str, '$');
-	i = 0;
-	while ((*str)[i] && (*str)[i] != '$')
-		i++;
-	while ((*str)[i] && (*str)[i] != ' ')
-		i++;
-	temp2 = ft_strjoin(temp, value);
-	free(temp);
-	temp = ft_strjoin(temp2, &((*str)[i]));
-	free(temp2);
-	free(*str);
-	*str = temp;
+	if (str[*i] == '$')
+	{
+		new_content = apply_var_value(cur->filtered, &str[*i], general);
+		if (new_content != cur->filtered)
+		{
+			cur->filtered = new_content;
+			str = cur->filtered;
+			*i = -1;
+		}
+	}
 }
 
-char	*apply_var_value(char *str, char *pos, t_general *general)
-{
-	char	*arg;
-	int		i;
-	char	*key;
-
-	arg = first_word(pos + 1, ' ');
-	i = 0;
-	while (general->envs[i])
-	{
-		key = find_key(general->envs[i]);
-		if (pos[1] == '$')
-		{
-			extract_pid(&str);
-			return (str);
-			break ;
-		}
-		else if (pos[1] == '?')
-		{
-			extract_case(&str);
-			return (str);
-			break ;
-		}
-		else if (ft_strcmp(key, arg) == 0)
-		{
-			extract_value(&str, general->envs[i]);
-			return (ft_strdup(str));
-			break ;
-		}
-		free(key);
-		i++;
-	}
-	free(arg);
-	return (str);
-}
-
-void	extract_quote(t_filter **tmp, t_general *general)
+static void	extract_quote(t_filter **tmp, t_general *general)
 {
 	t_filter	*cur;
 	char		*str;
-	char		*new_content;
 	int			i;
 
 	cur = *tmp;
@@ -144,21 +65,8 @@ void	extract_quote(t_filter **tmp, t_general *general)
 			str = cur->filtered;
 			i = -1;
 			while (str[++i])
-			{
-				if (str[i] == '$')
-				{
-					new_content = apply_var_value(cur->filtered, &str[i],
-							general);
-					if (new_content != cur->filtered)
-					{
-						cur->filtered = new_content;
-						str = cur->filtered;
-						i = -1;
-					}
-				}
-			}
+				extract_quote_utils(&i, str, cur, general);
 		}
-		printf("filtered: %s\n", cur->filtered);
 		cur = cur->next;
 	}
 }

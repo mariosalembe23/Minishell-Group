@@ -6,13 +6,11 @@
 /*   By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 19:07:57 by msalembe          #+#    #+#             */
-/*   Updated: 2024/11/08 14:03:12 by msalembe         ###   ########.fr       */
+/*   Updated: 2024/11/08 14:30:25 by msalembe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
 
 static int	ft_execution(t_general *general)
 {

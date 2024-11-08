@@ -6,7 +6,7 @@
 #    By: msalembe <msalembe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/01 08:43:12 by codespace         #+#    #+#              #
-#    Updated: 2024/11/07 16:26:19 by msalembe         ###   ########.fr        #
+#    Updated: 2024/11/08 15:21:12 by msalembe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,8 @@ SRC = minishell.c echo.c pwd.c  utils.c \
 	list.c env.c exit.c export.c \
 	signal.c token.c unset.c cd.c extract.c \
 	token_utils.c tokenization.c parse_token.c list_1.c \
-	quote.c quote_utils.c quote_utils_2.c 
+	quote.c quote_utils.c quote_utils_2.c extract_utils.c \
+	tokenizations_1.c execute_built.c
 
 CC = cc
 FLAGS = -Wall -Werror -Wextra
